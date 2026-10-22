@@ -12,13 +12,13 @@ class ClienteMODBUS():
         self._cliente.close()
 
     def ler_holding_register(self, addr, count=1):
-        resp = self._cliente.read_holding_registers(address=addr, count=count, slave=1)
+        resp = self._cliente.read_holding_registers(address=addr, count=count, device_id=1)
         if resp and not resp.isError():
             return resp.registers
         return None
 
     def escrever_holding_register(self, addr, valor):
-        resp = self._cliente.write_register(address=addr, value=valor, slave=1)
+        resp = self._cliente.write_register(address=addr, value=valor, device_id=1)
         if resp and not resp.isError():
             return True
         return False
@@ -35,7 +35,7 @@ class ClienteMODBUS():
         b = struct.pack('>f', float(valor))
         regs = [struct.unpack('>H', b[0:2])[0], struct.unpack('>H', b[2:4])[0]]
             
-        resp = self._cliente.write_registers(address=addr, values=regs, slave=1)
+        resp = self._cliente.write_registers(address=addr, values=regs, device_id=1)
         if resp and not resp.isError():
             return True
         return False
