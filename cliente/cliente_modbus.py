@@ -1,6 +1,4 @@
 from pymodbus.client import ModbusTcpClient
-from pymodbus.constants import DATATYPE
-from pymodbus.payload import convert_to_registers, convert_from_registers
 import struct
 
 class ClienteMODBUS():
@@ -28,22 +26,14 @@ class ClienteMODBUS():
     def ler_float32(self, addr):
         regs = self.ler_holding_register(addr, 2)
         if regs:
-            try:
-                valor = convert_from_registers(regs, DATATYPE.FLOAT32)
-                if isinstance(valor, (list, tuple)):
-                    return float(valor[0])
-                return float(valor)
-            except:
                 b = struct.pack('>HH', regs[0], regs[1])
                 return struct.unpack('>f', b)[0]
         return None
 
     def escrever_float32(self, addr, valor):
-        try:
-            regs = convert_to_registers([float(valor)], DATATYPE.FLOAT32)
-        except:
-            b = struct.pack('>f', float(valor))
-            regs = [struct.unpack('>H', b[0:2])[0], struct.unpack('>H', b[2:4])[0]]
+
+        b = struct.pack('>f', float(valor))
+        regs = [struct.unpack('>H', b[0:2])[0], struct.unpack('>H', b[2:4])[0]]
             
         resp = self._cliente.write_registers(address=addr, values=regs, slave=1)
         if resp and not resp.isError():
